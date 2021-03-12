@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Погода</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter">
+</head>
+<body>
+
+<main>
+    <header class="top-container">
+        <h1>Погода</h1>
+        <button class="refresh-geolocation">
+            <span class="refresh-text">Обновить геолокацию</span>
+            <img src="assets/update.png" alt="">
+        </button>
+    </header>
+
+    <div class="current-city loader-on">
+        <h2 class="city-header"></h2>
+        <ul class="full-weather-information"></ul>
+        <div class="city-loader">
+            <span>Подождите, данные загружаются</span>
+            <div class="loader-icon"></div>
+        </div>
+    </div>
+
+    <div class="favorites">
+        <div class="cities-header">
+            <h2>Избранные города</h2>
+            <form name="add-city" class="add-city">
+                <input type="text" id="favorite-city-name" class="search-field" placeholder="Добавить новый город">
+                <button class="add-city-button">Найти</button>
+            </form>
+        </div>
+
+        <ul class="city-list"></ul>
+    </div>
+</main>
+<script type="text/javascript" src="https://livejs.com/live.js"></script>
+<script type="text/javascript" src="js/weather.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>
