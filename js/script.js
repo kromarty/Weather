@@ -18,13 +18,11 @@ favoriteCitiesList.addEventListener('click', function (event) {
     }
 
     const cityId = event.target.closest('li').id.split('_')[1];
-    const cityName = event.target.closest('li').getElementsByClassName('city-name')[0].textContent;
     deleteFavoriteCityById(cityId);
     myStorage.removeItem(cityName);
 });
 
 refreshButton.addEventListener('click', function () {
-    myStorage.clear();
     setLoaderOnCurrentCity();
     loadCoordinatesFromGeolocationAPI();
 });
@@ -102,7 +100,7 @@ function deleteFavoriteCityById(cityId) {
 
 function renderCurrentCityBriefInformation(weatherData) {
     return `
-        <div class="current-city">
+        <div class="current-city-info">
             <h2 class="city-header">${weatherData['name']}</h2>
             <img src="${getWeatherIcon(weatherData['weather'][0]['icon'])}" class="weather-icon" alt="Иконка погоды">
             <ul class="full-weather-information">
