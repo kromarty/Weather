@@ -5,7 +5,6 @@ const currentCity = document.getElementsByClassName('current-city')[0];
 const myStorage = window.localStorage;
 
 
-// Events
 favoriteCityForm.addEventListener('submit', function (e) {
     const cityInput = document.getElementById('favorite-city-name');
     addFavoriteCityToUI(cityInput.value);
@@ -19,7 +18,9 @@ favoriteCitiesList.addEventListener('click', function (event) {
     }
 
     const cityId = event.target.closest('li').id.split('_')[1];
+    const cityName = event.target.closest('li').getElementsByClassName('city-name')[0].textContent;
     deleteFavoriteCityById(cityId);
+    myStorage.removeItem(cityName);
 });
 
 refreshButton.addEventListener('click', function () {
@@ -70,7 +71,7 @@ async function loadCitiesFromLocalStorage() {
 }
 
 async function addFavoriteCityToUI(cityName) {
-    const cityId = myStorage.length + 1;
+    var cityId = cityName;
     favoriteCitiesList.innerHTML += renderEmptyFavoriteCity(cityId);
 
     let weatherData = await getWeatherByCityName(cityName);
@@ -95,7 +96,7 @@ async function addFavoriteCityToUI(cityName) {
 }
 
 function deleteFavoriteCityById(cityId) {
-    const cityObject = document.getElementById(`favorite_${cityId}`);
+    var cityObject = document.getElementById(`favorite_${cityId}`);
     cityObject.remove();
 }
 
