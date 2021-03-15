@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter">
 </head>
 <body>
-
-<main>
     <header class="top-container">
         <h1>Погода</h1>
         <button class="refresh-geolocation">
@@ -18,8 +16,7 @@
     </header>
 
     <div class="current-city loader-on">
-        <h2 class="city-header"></h2>
-        <ul class="full-weather-information"></ul>
+        <div class="current-city-info"></div>
         <div class="city-loader">
             <span>Подождите, данные загружаются</span>
             <div class="loader-icon"></div>
@@ -37,7 +34,6 @@
 
         <ul class="city-list"></ul>
     </div>
-</main>
 <script type="text/javascript" src="https://livejs.com/live.js"></script>
 <script type="text/javascript" src="js/weather.js"></script>
 <script type="text/javascript" src="js/script.js"></script>

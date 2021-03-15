@@ -18,6 +18,7 @@ favoriteCitiesList.addEventListener('click', function (event) {
     }
 
     const cityId = event.target.closest('li').id.split('_')[1];
+    const cityName = event.target.closest('li').getElementsByClassName('city-name')[0].textContent;
     deleteFavoriteCityById(cityId);
     myStorage.removeItem(cityName);
 });
@@ -50,9 +51,8 @@ function loadCoordinatesFromGeolocationAPI() {
 
 async function updateCurrentCityInformation(coordinates) {
     let weatherData = await getWeatherByCoordinates(coordinates['latitude'], coordinates['longitude'])
-    currentCity.removeChild(currentCity.getElementsByClassName('city-header')[0]);
+    currentCity.removeChild(currentCity.getElementsByClassName('current-city-info')[0]);
     currentCity.innerHTML += renderCurrentCityBriefInformation(weatherData);
-    currentCity.removeChild(currentCity.getElementsByClassName('full-weather-information')[0]);
     unsetLoaderOnCurrentCity();
 }
 
