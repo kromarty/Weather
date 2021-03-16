@@ -1,104 +1,104 @@
-const favoriteCityForm = document.forms['add-city'];
+const cityListForm = document.forms['add-city'];
 const refreshButton = document.getElementsByClassName('refresh-geolocation')[0];
-const favoriteCitiesList = document.getElementsByClassName('city-list')[0];
+const citiesList = document.getElementsByClassName('city-list')[0];
 const currentCity = document.getElementsByClassName('current-city')[0];
-const myStorage = window.localStorage;
+const cityStorage = window.localStorage;
 
 
-favoriteCityForm.addEventListener('submit', function (e) {
+cityListForm.addEventListener('submit', function (e) {
     const cityInput = document.getElementById('favorite-city-name');
-    addFavoriteCityToUI(cityInput.value);
+    addCityToUI(cityInput.value);
     cityInput.value = '';
     e.preventDefault();
 });
 
-favoriteCitiesList.addEventListener('click', function (event) {
+citiesList.addEventListener('click', function (event) {
     if (!event.target.className.includes('close-button')) {
         return;
     }
 
     const cityId = event.target.closest('li').id.split('_')[1];
     const cityName = event.target.closest('li').getElementsByClassName('city-name')[0].textContent;
-    deleteFavoriteCityById(cityId);
-    myStorage.removeItem(cityName);
+    deleteCityById(cityId);
+    cityStorage.removeItem(cityName);
 });
 
 refreshButton.addEventListener('click', function () {
     setLoaderOnCurrentCity();
-    loadCoordinatesFromGeolocationAPI();
+    loadCurrentCityData();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
     setLoaderOnCurrentCity();
-    loadCoordinatesFromGeolocationAPI();
-    loadCitiesFromLocalStorage();
+    loadCurrentCityData();
+    loadCitiesFromStorage();
 });
 
-function loadCoordinatesFromGeolocationAPI() {
+function loadCurrentCityData() {
     navigator.geolocation.getCurrentPosition(function (position) {
-        updateCurrentCityInformation({
+        updateCurrentCityInfo({
             'latitude': position.coords.latitude,
             'longitude': position.coords.longitude
         });
     }, function (e) {
-        updateCurrentCityInformation({
+        updateCurrentCityInfo({
             'latitude': 55.76,
             'longitude': 37.62
         });
-        console.warn(`There has been a problem with access to geolocation: ` + e.message)
+        console.warn(`Unable to access to geolocation: ` + e.message)
     });
 }
 
-async function updateCurrentCityInformation(coordinates) {
+async function updateCurrentCityInfo(coordinates) {
     let weatherData = await getWeatherByCoordinates(coordinates['latitude'], coordinates['longitude'])
     currentCity.removeChild(currentCity.getElementsByClassName('current-city-info')[0]);
-    currentCity.innerHTML += renderCurrentCityBriefInformation(weatherData);
+    currentCity.innerHTML += renderCurrentCityData(weatherData);
     unsetLoaderOnCurrentCity();
 }
 
-async function loadCitiesFromLocalStorage() {
+async function loadCitiesFromStorage() {
     const copiedStorage = {};
-    for (let key of Object.keys(myStorage)) {
-        copiedStorage[key] = myStorage.getItem(key);
+    for (let key of Object.keys(cityStorage)) {
+        copiedStorage[key] = cityStorage.getItem(key);
     }
-    myStorage.clear();
+    cityStorage.clear();
 
     for (let key in copiedStorage) {
-        await addFavoriteCityToUI(key);
+        await addCityToUI(key);
     }
 }
 
-async function addFavoriteCityToUI(cityName) {
+async function addCityToUI(cityName) {
     var cityId = cityName;
-    favoriteCitiesList.innerHTML += renderEmptyFavoriteCity(cityId);
+    citiesList.innerHTML += renderCityLoader(cityId);
 
     let weatherData = await getWeatherByCityName(cityName);
 
     if (weatherData['cod'] !== 200) {
         alert('City name is incorrect or information is missing.');
-        deleteFavoriteCityById(cityId);
+        deleteCityById(cityId);
         return null;
     }
 
-    if (myStorage.getItem(weatherData['name']) !== null) {
+    if (cityStorage.getItem(weatherData['name']) !== null) {
         alert('You already have this city in favorites');
-        deleteFavoriteCityById(cityId);
+        deleteCityById(cityId);
         return null;
     }
 
-    myStorage.setItem(weatherData['name'], cityId);
+    cityStorage.setItem(weatherData['name'], cityId);
     const cityObject = document.getElementById(`favorite_${cityId}`);
-    cityObject.innerHTML += renderFavoriteCityBriefInformation(weatherData);
-    cityObject.innerHTML += renderFullWeatherInformation(weatherData);
-    unsetLoaderOnFavoriteCity(cityId);
+    cityObject.innerHTML += renderCityData(weatherData);
+    cityObject.innerHTML += renderWeatherInfo(weatherData);
+    unsetLoaderOnCity(cityId);
 }
 
-function deleteFavoriteCityById(cityId) {
+function deleteCityById(cityId) {
     var cityObject = document.getElementById(`favorite_${cityId}`);
     cityObject.remove();
 }
 
-function renderCurrentCityBriefInformation(weatherData) {
+function renderCurrentCityData(weatherData) {
     return `
         <div class="current-city-info">
             <h2 class="city-header">${weatherData['name']}</h2>
@@ -111,7 +111,7 @@ function renderCurrentCityBriefInformation(weatherData) {
         </div> `
 }
 
-function renderFavoriteCityBriefInformation(weatherData) {
+function renderCityData(weatherData) {
     return `
         <div class="city-header">
             <h3 class="city-name">${weatherData['name']}</h3>
@@ -119,7 +119,7 @@ function renderFavoriteCityBriefInformation(weatherData) {
         </div>`
 }
 
-function renderFullWeatherInformation(weatherData) {
+function renderWeatherInfo(weatherData) {
     return `
         <ul class="full-weather-information">
             <li class="weather-info"><div class="key">Температура</div><div class="value">${Math.round(weatherData['main']['temp_min'])}&deg;C</div></li>
@@ -127,7 +127,7 @@ function renderFullWeatherInformation(weatherData) {
             <li class="weather-info"><div class="key">Давление</div> <div class="value">${weatherData['main']['pressure']} hpa</div></li></ul>`
 }
 
-function renderEmptyFavoriteCity(cityId) {
+function renderCityLoader(cityId) {
     return `
         <li class="loader-on city" id="favorite_${cityId}">
             <div class="city-loader">
@@ -148,7 +148,7 @@ function unsetLoaderOnCurrentCity() {
     currentCity.classList.remove('loader-on');
 }
 
-function unsetLoaderOnFavoriteCity(cityId) {
+function unsetLoaderOnCity(cityId) {
     const cityObject = document.getElementById(`favorite_${cityId}`);
     cityObject.classList.remove('loader-on');
 }
