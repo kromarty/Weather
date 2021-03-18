@@ -148,53 +148,10 @@ h3{
     flex-wrap: wrap;
 }
 
-@media (max-width: 768px) {
-    .city-list{
-        display: block;
-    }
-
-    button span{
-        display: none;
-    }
-
-    button img{
-        display: block;
-        height: 15px;
-    }
-
-    h1{
-        font-size: 30px;
-    }
-
-    h2{
-        font-size: 20px;
-    }
-
-    h3{
-        font-size: 15px;
-    }
-
-    li{
-        font-size: 10px;
-    }
-
-    .current-city{
-        display: block;
-    }
-}
 
 .city{
     list-style-type: none;
 }
-
-
-@media (max-width: 520px) {
-    .search{
-        display: flex;
-        flex-direction:column;
-    }
-}
-
 
 main .loader-on,
 main .favorites .city-list .loader-on {
@@ -239,4 +196,51 @@ main .favorites .city-list .loader-on .full-weather-information {
     width: 2vw;
     margin: 2vh;
     animation: spin 3s linear infinite;
+}
+
+
+@media (max-width: 768px) {
+    .city-list{
+        display: block;
+    }
+
+    .refresh-geolocation span{
+        display: none;
+    }
+
+    .refresh-geolocation img{
+        display: block;
+        height: 15px;
+    }
+
+    h1{
+        font-size: 30px;
+    }
+
+    h2{
+        font-size: 20px;
+    }
+
+    h3{
+        font-size: 15px;
+    }
+
+    li{
+        font-size: 10px;
+    }
+
+    .current-city{
+        display: block;
+    }
+}
+
+@media (max-width: 520px) {
+    .search{
+        display: flex;
+        flex-direction:column;
+    }
+
+    .current-city-info{
+        display: block;
+    }
 }
