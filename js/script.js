@@ -70,18 +70,17 @@ async function loadCitiesFromStorage() {
 
 async function addCityToUI(cityName) {
     var cityId = cityName;
-    citiesList.innerHTML += renderCityLoader(cityId);
 
     let weatherData = await getWeatherByCityName(cityName);
 
-    if (weatherData['cod'] !== 200) {
-        alert('City name is incorrect or information is missing.');
-        deleteCityById(cityId);
+    if (cityStorage.getItem(weatherData['name']) !== null) {
+        alert('Вы уже добавили этот город');
         return null;
     }
+    citiesList.innerHTML += renderCityLoader(cityId);
 
-    if (cityStorage.getItem(weatherData['name']) !== null) {
-        alert('You already have this city in favorites');
+    if (weatherData['cod'] !== 200) {
+        alert('Неправильное название города или нет информации по городу.');
         deleteCityById(cityId);
         return null;
     }
