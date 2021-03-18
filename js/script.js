@@ -86,26 +86,32 @@ async function updateCurrentCityInfo(coordinates) {
     unsetCurrentCityLoader();
 }
 
+function isEmptyOrSpaces(str){
+    return str === null || str.match(/^ *$/) !== null;
+}
 
 async function addCity(cityName, fromStorage= false) {
-    //ханкадили
+    if (isEmptyOrSpaces(cityName)){
+        alert('Введите название города');
+        return;
+    }
     const cityId = fromStorage ? cityStorage.getItem(cityName) : getNewCityId();
     let weatherData = await getWeatherByCityName(cityName);
     const favoriteCityElement = renderEmptyCity(cityId);
     if (weatherData === undefined){
-        alert('No internet');
-        return null;
+        alert('Нет подключения к интернету');
+        return;
     }
     citiesList.appendChild(favoriteCityElement);
 
     if (weatherData['cod'] !== 200) {
-        alert('City name is incorrect or information is missing.');
+        alert('Нет данных по городу');
         deleteCityFromUI(cityId);
         return;
     }
 
     if (cityStorage.getItem(weatherData['name']) !== null && !fromStorage) {
-        alert('You already have this city in favorites');
+        alert('У вас уже есть этот город в списке избранных');
         deleteCityFromUI(cityId);
         return;
     }
