@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Погода</title>
+    <title>Weather</title>
     <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter">
 </head>
 <body>
-    <header class="top-container">
+
+<main>
+    <header>
         <h1>Погода</h1>
         <button class="refresh-geolocation">
             <span class="refresh-text">Обновить геолокацию</span>
@@ -17,25 +19,51 @@
     </header>
 
     <div class="current-city loader-on">
-        <div class="current-city-info"></div>
+        <div class="current-city-info">
+            <h2 class="city-header">Moscow</h2>
+            <img src="no-weather.png" class="weather-icon" alt="Иконка погоды">
+            <ul class="full-weather-info">
+                <li class="temperature weather-info"><span class="key">Температура</span> <span class="value">0</span></li>
+                <li class="wind weather-info"><span class="key">Ветер</span> <span class="value">6.0 m/s</span></li>
+                <li class="pressure weather-info"><span class="key">Давление</span> <span class="value">1000 hpa</span></li>
+            </ul>
+        </div>
         <div class="city-loader">
             <span>Подождите, данные загружаются</span>
             <div class="loader-icon"></div>
         </div>
     </div>
 
-    <div class="favorites">
-        <div class="cities-header">
-            <h2>Избранные города</h2>
-            <form name="add-city" class="add-city">
-                <input type="text" id="favorite-city-name" class="search-field" placeholder="Добавить новый город">
-                <button class="add-city-button">Найти</button>
-            </form>
-        </div>
-
-        <ul class="city-list"></ul>
+    <div class="cities-header">
+        <h2 class="favorites-title">Избранное</h2>
+        <form name="add-city" class="add-city">
+            <input type="text" id="favorite-city-name" class="add-city-field" placeholder="Добавить новый город">
+            <button class="add-city-button">Найти</button>
+        </form>
     </div>
-<script src="https://livejs.com/live.js"></script>
+
+    <ul class="city-list">
+        <template id="city-list-template">
+            <li class="loader-on" id="1">
+                <div class="head-weather-info">
+                    <h3 class="city-name">Moscow</h3>
+                    <button class="close-button">Х</button>
+                </div>
+                <ul class="full-weather-info">
+                    <li class="temperature weather-info"><span class="key">Температура</span> <span class="value">Broken clouds</span></li>
+                    <li class="wind weather-info"><span class="key">Ветер</span> <span class="value">Moderate breeze, 6.0 m/s, North-northwest</span></li>
+                    <li class="pressure weather-info"><span class="key">Давление</span> <span class="value">1013 hpa</span></li>
+                </ul>
+
+                <div class="city-loader">
+                    <span>Подождите, данные загружаются</span>
+                    <div class="loader-icon"></div>
+                </div>
+            </li>
+        </template>
+    </ul>
+</main>
+
 <script src="js/weather.js"></script>
 <script src="js/script.js"></script>
 </body>

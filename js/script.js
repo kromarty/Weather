@@ -1,13 +1,39 @@
-const cityListForm = document.forms['add-city'];
+const cityForm = document.forms['add-city'];
 const refreshButton = document.getElementsByClassName('refresh-geolocation')[0];
 const citiesList = document.getElementsByClassName('city-list')[0];
 const currentCity = document.getElementsByClassName('current-city')[0];
 const cityStorage = window.localStorage;
 
+async function loadCities() {
+    for (let key of getCityList()) {
+        addCity(key, true);
+    }
+}
 
-cityListForm.addEventListener('submit', function (e) {
+function getNewCityId() {
+    const cityId = cityStorage.getItem('lastId');
+    cityStorage.setItem('lastId', Number.parseInt(cityStorage.getItem('lastId')) + 1);
+    return cityId;
+}
+
+function getCityList() {
+    let keys = Object.keys(cityStorage).filter(item => item !== 'lastId');
+    keys.sort(function (first, second) {
+        return cityStorage.getItem(first) - cityStorage.getItem(second);
+    });
+
+    return keys;
+}
+
+function createStorage() {
+    if (cityStorage.getItem('lastId') === null) {
+        cityStorage.setItem('lastId', 0);
+    }
+}
+
+cityForm.addEventListener('submit', function (e) {
     const cityInput = document.getElementById('favorite-city-name');
-    addCityToUI(cityInput.value);
+    addCity(cityInput.value);
     cityInput.value = '';
     e.preventDefault();
 });
@@ -18,23 +44,26 @@ citiesList.addEventListener('click', function (event) {
     }
 
     const cityId = event.target.closest('li').id.split('_')[1];
-    const cityName = event.target.closest('li').getElementsByClassName('city-name')[0].textContent;
     deleteCityById(cityId);
-    cityStorage.removeItem(cityName);
 });
 
 refreshButton.addEventListener('click', function () {
     setLoaderOnCurrentCity();
-    loadCurrentCityData();
+    getCoordinates();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
+    createStorage();
     setLoaderOnCurrentCity();
-    loadCurrentCityData();
-    loadCitiesFromStorage();
+    getCoordinates();
+    loadCities();
 });
 
-function loadCurrentCityData() {
+async function updateFavicon(weatherData) {
+    document.getElementById('favicon').href = getWeatherIcon(weatherData);
+}
+
+function getCoordinates() {
     navigator.geolocation.getCurrentPosition(function (position) {
         updateCurrentCityInfo({
             'latitude': position.coords.latitude,
@@ -45,96 +74,87 @@ function loadCurrentCityData() {
             'latitude': 55.76,
             'longitude': 37.62
         });
-        console.warn(`Unable to access to geolocation: ` + e.message)
+        console.warn(`There has been a problem with access to geolocation: ` + e.message)
     });
 }
 
 async function updateCurrentCityInfo(coordinates) {
     let weatherData = await getWeatherByCoordinates(coordinates['latitude'], coordinates['longitude'])
-    currentCity.removeChild(currentCity.getElementsByClassName('current-city-info')[0]);
-    currentCity.innerHTML += renderCurrentCityData(weatherData);
-    unsetLoaderOnCurrentCity();
+    updateFavicon(weatherData);
+    updateCurrentCityHeadInfo(weatherData);
+    updateFullWeatherInfo(currentCity, weatherData);
+    unsetCurrentCityLoader();
 }
 
-async function loadCitiesFromStorage() {
-    const copiedStorage = {};
-    for (let key of Object.keys(cityStorage)) {
-        copiedStorage[key] = cityStorage.getItem(key);
-    }
-    cityStorage.clear();
 
-    for (let key in copiedStorage) {
-        await addCityToUI(key);
-    }
-}
-
-async function addCityToUI(cityName) {
-    var cityId = cityName;
-
+async function addCity(cityName, fromStorage= false) {
+    //ханкадили
+    const cityId = fromStorage ? cityStorage.getItem(cityName) : getNewCityId();
     let weatherData = await getWeatherByCityName(cityName);
-
-    if (cityStorage.getItem(weatherData['name']) !== null) {
-        alert('Вы уже добавили этот город');
+    const favoriteCityElement = renderEmptyCity(cityId);
+    if (weatherData === undefined){
+        alert('No internet');
         return null;
     }
-    citiesList.innerHTML += renderCityLoader(cityId);
+    citiesList.appendChild(favoriteCityElement);
 
     if (weatherData['cod'] !== 200) {
-        alert('Неправильное название города или нет информации по городу.');
-        deleteCityById(cityId);
-        return null;
+        alert('City name is incorrect or information is missing.');
+        deleteCityFromUI(cityId);
+        return;
+    }
+
+    if (cityStorage.getItem(weatherData['name']) !== null && !fromStorage) {
+        alert('You already have this city in favorites');
+        deleteCityFromUI(cityId);
+        return;
     }
 
     cityStorage.setItem(weatherData['name'], cityId);
-    const cityObject = document.getElementById(`favorite_${cityId}`);
-    cityObject.innerHTML += renderCityData(weatherData);
-    cityObject.innerHTML += renderWeatherInfo(weatherData);
-    unsetLoaderOnCity(cityId);
+
+    updateCityHeadInfo(favoriteCityElement, weatherData);
+    updateFullWeatherInfo(favoriteCityElement, weatherData);
+    unsetCityLoader(cityId);
 }
 
 function deleteCityById(cityId) {
-    var cityObject = document.getElementById(`favorite_${cityId}`);
+    for (let key of getCityList()) {
+        if (cityStorage.getItem(key) === cityId) {
+            cityStorage.removeItem(key);
+            break
+        }
+    }
+
+    deleteCityFromUI(cityId);
+}
+
+function deleteCityFromUI(cityId) {
+    const cityObject = document.getElementById(`favorite_${cityId}`);
     cityObject.remove();
 }
 
-function renderCurrentCityData(weatherData) {
-    return `
-        <div class="current-city-info">
-            <h2 class="city-header">${weatherData['name']}</h2>
-            <img src="${getWeatherIcon(weatherData['weather'][0]['icon'])}" class="weather-icon" alt="Иконка погоды">
-            <ul class="full-weather-information">
-                <li class="weather-info"><div class="key">Температура</div><div class="value">${Math.round(weatherData['main']['temp_min'])}&deg;C</div></li>
-                <li class="weather-info"><div class="key">Ветер</div> <div class="value">${weatherData['wind']['speed']} m/s, ${weatherData['wind']['deg']}</div></li>
-                <li class="weather-info"><div class="key">Давление</div> <div class="value">${weatherData['main']['pressure']} hpa</div></li>
-            </ul>
-        </div> `
+function updateCurrentCityHeadInfo(weatherData) {
+    currentCity.getElementsByClassName('city-header')[0].textContent = weatherData['name'];
+    currentCity.getElementsByClassName('weather-icon')[0].src = getWeatherIcon(weatherData);
 }
 
-function renderCityData(weatherData) {
-    return `
-        <div class="city-header">
-            <h3 class="city-name">${weatherData['name']}</h3>
-            <button class="close-button">X</button>
-        </div>`
+function updateCityHeadInfo(favoriteCityElement, weatherData) {
+    const briefWeatherElement = favoriteCityElement.getElementsByClassName('head-weather-info')[0];
+    briefWeatherElement.getElementsByClassName('city-name')[0].textContent = weatherData['name'];
 }
 
-function renderWeatherInfo(weatherData) {
-    return `
-        <ul class="full-weather-information">
-            <li class="weather-info"><div class="key">Температура</div><div class="value">${Math.round(weatherData['main']['temp_min'])}&deg;C</div></li>
-            <li class="weather-info"><div class="key">Ветер</div> <div class="value">${weatherData['wind']['speed']} m/s, ${weatherData['wind']['deg']}</div></li>
-            <li class="weather-info"><div class="key">Давление</div> <div class="value">${weatherData['main']['pressure']} hpa</div></li></ul>`
+function updateFullWeatherInfo(favoriteCityElement, weatherData) {
+    const fullWeatherElement = favoriteCityElement.getElementsByClassName('full-weather-info')[0];
+    fullWeatherElement.getElementsByClassName('temperature')[0].getElementsByClassName('value')[0].textContent = `${Math.round(weatherData['main']['temp_min'])} ℃`;
+    fullWeatherElement.getElementsByClassName('wind')[0].getElementsByClassName('value')[0].textContent = `${weatherData['wind']['speed']} m/s`;
+    fullWeatherElement.getElementsByClassName('pressure')[0].getElementsByClassName('value')[0].textContent = `${weatherData['main']['pressure']} hpa`;
 }
 
-function renderCityLoader(cityId) {
-    return `
-        <li class="loader-on city" id="favorite_${cityId}">
-            <div class="city-loader">
-                <span>Подождите, данные загружаются</span>
-                <div class="loader-icon"></div>
-            </div>
-        </li>
-    `
+function renderEmptyCity(cityId) {
+    const template = document.getElementById('city-list-template');
+    const favoriteCityElement = document.importNode(template.content.firstElementChild, true);
+    favoriteCityElement.id = `favorite_${cityId}`;
+    return favoriteCityElement;
 }
 
 function setLoaderOnCurrentCity() {
@@ -143,11 +163,11 @@ function setLoaderOnCurrentCity() {
     }
 }
 
-function unsetLoaderOnCurrentCity() {
+function unsetCurrentCityLoader() {
     currentCity.classList.remove('loader-on');
 }
 
-function unsetLoaderOnCity(cityId) {
+function unsetCityLoader(cityId) {
     const cityObject = document.getElementById(`favorite_${cityId}`);
     cityObject.classList.remove('loader-on');
 }

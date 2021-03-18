@@ -1,4 +1,4 @@
-const API_KEY = 'b0555787759c4e8382148ae636958af2';
+const API_KEY = '6d00d1d4e704068d70191bad2673e0cc';
 const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
 function getWeatherByCityName(cityName) {
@@ -11,8 +11,8 @@ function getWeatherByCoordinates(lat, lon) {
     return doRequest(url);
 }
 
-function getWeatherIcon(iconName) {
-    return `https://openweathermap.org/img/wn/${iconName}.png`
+function getWeatherIcon(weatherData) {
+    return `https://openweathermap.org/img/wn/${weatherData['weather'][0]['icon']}.png`
 }
 
 function doRequest(url) {

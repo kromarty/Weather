@@ -90,6 +90,7 @@ header h1{
 }
 
 ul{
+    list-style-type: none;
     align-content: start;
     padding-left: 0;
 }
@@ -134,7 +135,7 @@ h3{
     height: 15vw;
 }
 
-.full-weather-information{
+.full-weather-info{
     grid-column-start: 2;
     grid-column-end: 3;
     grid-row-start: 2;
@@ -148,10 +149,6 @@ h3{
     flex-wrap: wrap;
 }
 
-
-.city{
-    list-style-type: none;
-}
 
 main .loader-on,
 main .favorites .city-list .loader-on {
