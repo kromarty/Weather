@@ -83,7 +83,7 @@ async function updateCurrentCityInfo(coordinates) {
     unsetCurrentCityLoader();
     updateFavicon(weatherData);
     updateCurrentCityHeadInfo(weatherData);
-    updateFullWeatherInfo(currentCity, weatherData);
+    updateFullMainWeatherInfo(currentCity, weatherData);
 }
 
 function isEmptyOrSpaces(str){
@@ -147,14 +147,23 @@ function updateCurrentCityHeadInfo(weatherData) {
 function updateCityHeadInfo(favoriteCityElement, weatherData) {
     const briefWeatherElement = favoriteCityElement.getElementsByClassName('head-weather-info')[0];
     briefWeatherElement.getElementsByClassName('city-name')[0].textContent = weatherData['name'];
+    briefWeatherElement.getElementsByClassName('temperature-number')[0].innerHTML = `${Math.round(weatherData['main']['temp_min'])} &deg;C`;
+    briefWeatherElement.getElementsByClassName('weather-icon')[0].src = getWeatherIcon(weatherData);
 }
 
-function updateFullWeatherInfo(favoriteCityElement, weatherData) {
+function updateFullMainWeatherInfo(favoriteCityElement, weatherData) {
     const fullWeatherElement = favoriteCityElement.getElementsByClassName('full-weather-info')[0];
     fullWeatherElement.getElementsByClassName('temperature')[0].getElementsByClassName('value')[0].textContent = `${Math.round(weatherData['main']['temp_min'])} ℃`;
     fullWeatherElement.getElementsByClassName('wind')[0].getElementsByClassName('value')[0].textContent = `${weatherData['wind']['speed']} m/s`;
     fullWeatherElement.getElementsByClassName('pressure')[0].getElementsByClassName('value')[0].textContent = `${weatherData['main']['pressure']} hpa`;
 }
+
+function updateFullWeatherInfo(favoriteCityElement, weatherData) {
+    const fullWeatherElement = favoriteCityElement.getElementsByClassName('full-weather-info')[0];
+    fullWeatherElement.getElementsByClassName('wind')[0].getElementsByClassName('value')[0].textContent = `${weatherData['wind']['speed']} m/s`;
+    fullWeatherElement.getElementsByClassName('cloudy')[0].getElementsByClassName('value')[0].textContent = weatherData['weather'][0]['main'];
+    fullWeatherElement.getElementsByClassName('pressure')[0].getElementsByClassName('value')[0].textContent = `${weatherData['main']['pressure']} hpa`;
+    fullWeatherElement.getElementsByClassName('humidity')[0].getElementsByClassName('value')[0].textContent = `${weatherData['main']['humidity']}%`;}
 
 function renderEmptyCity(cityId) {
     const template = document.getElementById('city-list-template');
@@ -165,6 +174,7 @@ function renderEmptyCity(cityId) {
 
 function setLoaderOnCurrentCity() {
     if (!currentCity.classList.contains('loader-on')) {
+
         currentCity.classList.add('loader-on');
     }
 }

@@ -21,7 +21,7 @@
     <div class="current-city loader-on">
         <div class="current-city-info">
             <h2 class="city-header">Moscow</h2>
-            <img src="assets/update.png" class="weather-icon" alt="Иконка погоды">
+            <img src="assets/update.png" class="weather-icon main-icon" alt="Иконка погоды" id="favicon">
             <ul class="full-weather-info">
                 <li class="temperature weather-info"><span class="key">Температура</span> <span class="value">0</span></li>
                 <li class="wind weather-info"><span class="key">Ветер</span> <span class="value">6.0 m/s</span></li>
@@ -46,13 +46,18 @@
         <template id="city-list-template">
             <li class="loader-on" id="1">
                 <div class="head-weather-info">
+                    <div class="head-weather-info" style="width: auto">
                     <h3 class="city-name">Moscow</h3>
+                    <span class="temperature-number">8&deg;C</span>
+                    <img src="assets/update.png" class="list-icon weather-icon" alt="Иконка погоды">
+                    </div>
                     <button class="close-button">Х</button>
                 </div>
                 <ul class="full-weather-info">
-                    <li class="temperature weather-info"><span class="key">Температура</span> <span class="value">Broken clouds</span></li>
-                    <li class="wind weather-info"><span class="key">Ветер</span> <span class="value">Moderate breeze, 6.0 m/s, North-northwest</span></li>
-                    <li class="pressure weather-info"><span class="key">Давление</span> <span class="value">1013 hpa</span></li>
+                    <li class="wind weather-info"><span class="key">Ветер</span> <span class="value">6.0 m/s</span></li>
+                    <li class="cloudy weather-info"><span class="key">Облачность</span> <span class="value">Broken clouds</span></li>
+                    <li class="pressure weather-info"><span class="key">Давление</span> <span class="value">1000 hpa</span></li>
+                    <li class="humidity weather-info"><span class="key">Влажность</span> <span class="value">52%</span></li>
                 </ul>
 
                 <div class="city-loader">
