@@ -79,11 +79,11 @@ function getCoordinates() {
 }
 
 async function updateCurrentCityInfo(coordinates) {
-    let weatherData = await getWeatherByCoordinates(coordinates['latitude'], coordinates['longitude'])
+    let weatherData = await getWeatherByCoordinates(coordinates['latitude'], coordinates['longitude']);
+    unsetCurrentCityLoader();
     updateFavicon(weatherData);
     updateCurrentCityHeadInfo(weatherData);
     updateFullWeatherInfo(currentCity, weatherData);
-    unsetCurrentCityLoader();
 }
 
 function isEmptyOrSpaces(str){

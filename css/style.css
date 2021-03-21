@@ -21,6 +21,17 @@ button{
     background-size: 100% auto;
 }
 
+.add-city-field{
+    width: 77%;
+}
+
+.search{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 80%;
+}
+
 #city-name{
     margin-right: 10px;
     padding: 10px;
@@ -47,9 +58,6 @@ button span{
     display: block;
 }
 
-.gradient-button:hover {
-    background-position: right center;
-}
 header{
     display: flex;
     justify-content: space-between;
@@ -72,7 +80,7 @@ header h1{
     grid-auto-rows: minmax(auto, auto);
 }
 
-.city-header{
+.head-weather-info{
     display: flex;
     justify-content: space-between;
 }
@@ -231,7 +239,7 @@ main .favorites .city-list .loader-on .full-weather-information {
     }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 340px) {
     .search{
         display: flex;
         flex-direction:column;
@@ -239,5 +247,16 @@ main .favorites .city-list .loader-on .full-weather-information {
 
     .current-city-info{
         display: block;
+    }
+
+    .add-city-button {
+        padding: 10px 10px;
+        margin: 10px 0;
+        border-radius: 10px;
+        letter-spacing: 2px;
+        background-size: 100% auto;
+    }
+    .add-city-field{
+        width: 100%;
     }
 }
