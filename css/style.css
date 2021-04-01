@@ -32,7 +32,7 @@ button{
     width: 80%;
 }
 
-#city-name{
+.add-city-field{
     margin-right: 10px;
     padding: 10px;
     border: 0;
@@ -184,12 +184,16 @@ main .favorites .city-list .loader-on {
 main .loader-on .city-header,
 main .loader-on .full-weather-info,
 main .loader-on .main-icon,
-main .city-list .loader-on .city-header,
-main .city-list .loader-on .full-weather-info {
+main .loader-on .head-weather-info {
     display: none;
 }
 
-.loader-on .city-loader {
+.city-list-template{
+    display: block;
+}
+
+.loader-on .city-loader
+{
     display: flex;
     justify-content: center;
     align-items: center;

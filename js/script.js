@@ -48,13 +48,13 @@ citiesList.addEventListener('click', function (event) {
 });
 
 refreshButton.addEventListener('click', function () {
-    setLoaderOnCurrentCity();
+    setCurrentCityLoader();
     getCoordinates();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
     createStorage();
-    setLoaderOnCurrentCity();
+    setCurrentCityLoader();
     getCoordinates();
     loadCities();
 });
@@ -79,7 +79,12 @@ function getCoordinates() {
 }
 
 async function updateCurrentCityInfo(coordinates) {
+    setCurrentCityLoader()
     let weatherData = await getWeatherByCoordinates(coordinates['latitude'], coordinates['longitude']);
+    if (weatherData === undefined) {
+        alert('Нет подключения к интернету');
+        return;
+    }
     unsetCurrentCityLoader();
     updateFavicon(weatherData);
     updateCurrentCityHeadInfo(weatherData);
@@ -96,13 +101,15 @@ async function addCity(cityName, fromStorage= false) {
         return;
     }
     const cityId = fromStorage ? cityStorage.getItem(cityName) : getNewCityId();
-    let weatherData = await getWeatherByCityName(cityName);
     const favoriteCityElement = renderEmptyCity(cityId);
+    citiesList.appendChild(favoriteCityElement);
+    let weatherData = await getWeatherByCityName(cityName);
+
     if (weatherData === undefined){
         alert('Нет подключения к интернету');
+        deleteCityFromUI(cityId);
         return;
     }
-    citiesList.appendChild(favoriteCityElement);
 
     if (weatherData['cod'] !== 200) {
         alert('Нет данных по городу');
@@ -169,10 +176,12 @@ function renderEmptyCity(cityId) {
     const template = document.getElementById('city-list-template');
     const favoriteCityElement = document.importNode(template.content.firstElementChild, true);
     favoriteCityElement.id = `favorite_${cityId}`;
+    favoriteCityElement.className = 'loader-on'
+
     return favoriteCityElement;
 }
 
-function setLoaderOnCurrentCity() {
+function setCurrentCityLoader() {
     if (!currentCity.classList.contains('loader-on')) {
 
         currentCity.classList.add('loader-on');
