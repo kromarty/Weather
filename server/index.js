@@ -57,7 +57,6 @@ app.get('/features', async (request, response) => {
 app.post('/features', async (request, response) => {
     let city = request.query['city'];
     let cities = await db.any('SELECT city FROM cities WHERE city=$1', [city]);
-
     if (cities.length === 0){
         await db.none('INSERT INTO cities(city) VALUES($1)', [city]);
         response.status(200).send(city);

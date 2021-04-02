@@ -127,8 +127,8 @@ async function placeCity(city, loader = true) {
         }
         return true;
     } else if (res === 404) {
-        el.remove();
         alert("Такой город не найден");
+        removeCity(el, city);
     } else if (res === -1) {
         setLoader(el);
     }
