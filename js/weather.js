@@ -12,7 +12,7 @@ function getWeatherByCoordinates(lat, lon) {
 }
 
 function getWeatherIcon(weatherData) {
-    return `https://openweathermap.org/img/wn/${weatherData['weather'][0]['icon']}.png`
+    return `https://openweathermap.org/img/w/${weatherData['weather'][0]['icon']}.png`
 }
 
 function doRequest(url) {
