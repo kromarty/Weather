@@ -22,14 +22,6 @@ const initOptions = {
 let pgp = require("pg-promise")(initOptions);
 let db = pgp("postgres://postgres:password@localhost:5432/Weather");
 
-const getWeatherByCityName = (cityName) => {
-    return `${API_URL}?q=${cityName}&units=metric&appid=${API_KEY}`;
-}
-
-const getWeatherByCoordinates = (lat, lon) => {
-    return `${API_URL}?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;
-}
-
 app.get('/weather/city', (request, response) => {
     const city = request.query['q'];
     fetch(getWeatherByCityName(encodeURIComponent(city)))
@@ -81,3 +73,11 @@ app.listen(port, (err) => {
     }
     console.log(`server is listening on ${port}`)
 })
+
+const getWeatherByCityName = (cityName) => {
+    return `${API_URL}?q=${cityName}&units=metric&appid=${API_KEY}`;
+}
+
+const getWeatherByCoordinates = (lat, lon) => {
+    return `${API_URL}?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;
+}
